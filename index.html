@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8' />
+    <title></title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <script src='https://api.mapbox.com/mapbox-gl-js/v0.40.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v0.40.0/mapbox-gl.css' rel='stylesheet' />
+
+
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+
+    <link href="font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
+    
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link href="css/simple-sidebar.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+    <!-- Bootstrap navbar -->
+    <nav class="navbar navbar-toggleable-md navbar-light bnrc-navbar">
+        <a class="navbar-brand" href="#"><img src="img/logo.png"></a>
+        <ul class="nav navbar-nav navbar-right">
+            <div class="navbar-nav">
+                <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="menu-toggle"><i class="fa fa-map white"></i>&nbsp;&nbsp;Layer Inspector</a></li>
+            </div>
+            </div>
+    </nav>
+
+
+    <div id="wrapper" class="toggled">
+        <div id="sidebar-wrapper">
+            <div class="container-fluid" id="features">
+                <h3>Trail Info:</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                       <strong>Name:</strong>
+                    </div>
+                    <div class="col-md-6" id='name-value'>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Reserve:</strong>
+                    </div>
+                    <div class="col-md-6" id='reserve-value'>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Miles:</strong>
+                                        </div>
+                    <div class="col-md-6" id='mileage-value'>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container-fluid" id="features">
+                <h3>Public Access Info:</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Property:</strong>
+                    </div>
+                    <div class="col-md-6" id='property-value'>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Acres:</strong>
+                    </div>
+                    <div class="col-md-6" id='acres-value'>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-content-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <div style="position: fixed; height:100%; width:100%; z-index:-1;" id='map'></div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="bower_components/jquery/dist/jquery.min.js" ></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="js/map.js"></script>
+
+    <script>
+        // Navbar Menu
+        $("#menu-toggle").click(function (e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+    </script>
+</body>
+
+</html>
