@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title></title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+    <style>
+        #menu {
+            background: #fff;
+            position: absolute;
+            z-index: 1;
+            top: 10px;
+            right: 60px;
+            border-radius: 3px;
+            width: 120px;
+            border: 1px solid rgba(0,0,0,0.4);
+            font-family: 'Open Sans', sans-serif;
+        }
+    
+        #menu a {
+            font-size: 13px;
+            color: #404040;
+            display: block;
+            margin: 0;
+            padding: 0;
+            padding: 10px;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(0,0,0,0.25);
+            text-align: center;
+        }
+    
+        #menu a:last-child {
+            border: none;
+        }
+    
+        #menu a:hover {
+            background-color: #f8f8f8;
+            color: #404040;
+        }
+    
+        #menu a.active {
+            background-color: #3887be;
+            color: #ffffff;
+        }
+    
+        #menu a.active:hover {
+            background: #3074a4;
+        }
+
+        .marker-bnrc {
+        background-image: url('images/BNRC_ICON_LOGO.png');
+        background-size: cover;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        cursor: pointer;
+        }
+
+        .marker-audubon {
+        background-image: url('images/audubon-exported.png');
+        background-size: cover;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        cursor: pointer;
+        }
+
+        .marker-massgame {
+        background-image: url('images/mass-fish-and-game-exported.png');
+        background-size: cover;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        cursor: pointer;
+        }
+        
+        .marker-trustees {
+        background-image: url('images/trustees.png');
+        background-size: cover;
+        /*width: 20px;*/
+        height: 20px;
+        border-radius: 50%;
+        cursor: pointer;
+        }
+
+
+        .mapboxgl-popup {
+        max-width: 200px;
+        }
+
+        .mapboxgl-popup-content {
+        text-align: center;
+        font-family: 'Open Sans', sans-serif;
+        }
+
+        #zoom-level {
+            margin: 10px;
+            padding: 10px;
+            position: absolute;
+            right: 0;
+            bottom:0;
+            z-index: 1000;
+            background: #ddd;
+        }      
+
+        .marker-one {
+        background-image: url('images/1.png');
+        background-size: cover;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        cursor: pointer;
+        } 
+
+        .marker-two {
+        background-image: url('images/2.png');
+        background-size: cover;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        cursor: pointer;
+        } 
+
+        .marker-three {
+        background-image: url('images/3.png');
+        background-size: cover;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        cursor: pointer;
+        } 
+
+        .marker-four {
+        background-image: url('images/4.png');
+        background-size: cover;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        cursor: pointer;
+        }     
+    </style>
+</head>
+<body>
+<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v3.1.2/mapbox-gl-directions.js'></script>
+<link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v3.1.2/mapbox-gl-directions.css' type='text/css' />
+<nav id="menu"></nav>
+<div id='map'></div>
+<div id='zoom-level'>Zoom Level: --</div>
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiaG9vaG90IiwiYSI6ImNqMXkxZzI4NDAwYjMycXFsOTBnZzFva3IifQ.XeP07p882sG8JYywDFa-xg';
+
+
+var map = new mapboxgl.Map({
+    container: 'map', // container id
+    style: 'mapbox://styles/hoohot/cjglje4yk000c2so2cd99bxg1', // stylesheet location
+    center: [-73.247039, 42.450025 ], // starting position [lng, lat]
+    zoom: 9 // starting zoom
+});
+
+var geojson = {
+  type: 'FeatureCollection',
+  features: [
+   {
+    type: 'Feature',
+    geometry: {
+      type: 'Point',
+      coordinates: 
+      [
+      -73.4457,
+      42.2482
+      ]
+    },
+    properties: {
+      title: 'Father Loop Entrance',
+      description: 'Alford Springs',
+      "iconSize": [20, 20],
+      "owner": "one"
+    }
+   },
+   {
+    type: 'Feature',
+    geometry: {
+      type: 'Point',
+      coordinates: [
+      -73.43861, 
+      42.2524 
+    ]
+    },
+    properties: {
+      title: 'Mother Loop Entrance',
+      description: 'Alford Springs',
+      "iconSize": [20, 20],
+      "owner": "two"
+    }
+
+  } 
+  ]
+};
+
+map.on('load', function () {
+            // get the data for initial zoom level and present
+            document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
+
+          // BNRC boundaries
+	 map.addSource('bnrc-boundaries', {
+                type: 'vector',
+                url: 'mapbox://hoohot.90mc4bg8'
+              });
+             map.addLayer({
+                 'id': 'bnrc-boundaries',
+                 'type': 'fill',
+                 'source': 'bnrc-boundaries',
+                 'paint': {
+                     'fill-outline-color': '#3a3836',
+                    
+  		     'fill-color': '#a4adf2',
+                     'fill-opacity': 0.6
+                 },
+                 'source-layer': 'doug-test-050818-Export_Outpu-clayfo'
+             });
+
+             // Pleasant Valley boundaries
+	 map.addSource('pleasant-boundaries', {
+                type: 'vector',
+                url: 'mapbox://hoohot.4wvrc3o1'
+              });
+             map.addLayer({
+                 'id': 'pleasant-boundaries',
+                 'type': 'fill',
+                 'source': 'pleasant-boundaries',
+                 'paint': {
+                     'fill-outline-color': '#3a3836',
+                    
+  		     'fill-color': '#e280dd',
+                     'fill-opacity': 0.6
+                 },
+                 'source-layer': 'Pleasant_Valley-Boundaries-8st0d5'
+             });
+
+             // Monument Mountain boundaries
+	 map.addSource('monument-boundaries', {
+                type: 'vector',
+                url: 'mapbox://hoohot.cydbfjta'
+              });
+             map.addLayer({
+                 'id': 'monument-boundaries',
+                 'type': 'fill',
+                 'source': 'monument-boundaries',
+                 'paint': {
+                     'fill-outline-color': '#3a3836',
+                    
+  		     'fill-color': '#d2e977',
+                     'fill-opacity': 0.6
+                 },
+                 'source-layer': 'Monument_Mt_Doug_edits_2018_4-b409d1'
+             });
+
+                  // October Mountain boundaries
+	 map.addSource('october-boundaries', {
+                type: 'vector',
+                url: 'mapbox://hoohot.9tpwuudr'
+              });
+             map.addLayer({
+                 'id': 'october-boundaries',
+                 'type': 'fill',
+                 'source': 'october-boundaries',
+                 'paint': {
+                     'fill-outline-color': '#3a3836',
+                    
+  		     'fill-color': '#81e2b0',
+                     'fill-opacity': 0.6
+                 },
+                 'source-layer': 'October_MSF_Doug_edits_2018_4-b5j9ki'
+             });
+
+
+
+            //BNRC MAINTAINED TRAILS
+            map.addSource('bnrc-maintained', {
+                type: 'vector',
+                url: 'mapbox://hoohot.8i9ogxpb'
+            });
+            map.addLayer({
+                'id': 'bnrc-maintained',
+                'type': 'line',
+                'minzoom': 9.85,
+                'source': 'bnrc-maintained',
+                'layout': {
+                    'visibility': 'visible',
+                    'line-join': 'bevel',
+                    'line-cap': 'butt'
+                },
+                'paint': {
+                    'line-color': '#847e79',
+                    'line-width': 1.2
+                },
+                'source-layer': 'Doug_BNRC_Trails_040518-6rhno0'
+            }); 
+
+            //Pleasant Valley Trails
+            map.addSource('pleasant-trails', {
+                type: 'vector',
+                url: 'mapbox://hoohot.829567xx'
+            });
+            map.addLayer({
+                'id': 'pleasant-trails',
+                'type': 'line',
+                'minzoom': 9.85,
+                'source': 'pleasant-trails',
+                'layout': {
+                    'visibility': 'visible',
+                    'line-join': 'bevel',
+                    'line-cap': 'butt'
+                },
+                'paint': {
+                    'line-color': '#847e79',
+                    'line-width': 1.2
+                },
+                'source-layer': 'Pleasant_Valley_trails_Doug_2-4p1o6t'
+            }); 
+
+            //Monument Mountain Trails
+            map.addSource('monument-trails', {
+                type: 'vector',
+                url: 'mapbox://hoohot.7ejlu60y'
+            });
+            map.addLayer({
+                'id': 'monument-trails',
+                'type': 'line',
+                'minzoom': 9.85,
+                'source': 'monument-trails',
+                'layout': {
+                    'visibility': 'visible',
+                    'line-join': 'bevel',
+                    'line-cap': 'butt'
+                },
+                'paint': {
+                    'line-color': '#847e79',
+                    'line-width': 1.2
+                },
+                'source-layer': 'Monument_Mt_trails_Doug_edits-8mesci'
+            }); 
+
+            //October Mountain Trails
+            map.addSource('october-trails', {
+                type: 'vector',
+                url: 'mapbox://hoohot.4grp78tq'
+            });
+            map.addLayer({
+                'id': 'october-trails',
+                'type': 'line',
+                'minzoom': 9.85,
+                'source': 'october-trails',
+                'layout': {
+                    'visibility': 'visible',
+                    'line-join': 'bevel',
+                    'line-cap': 'butt'
+                },
+                'paint': {
+                    //'line-color': '#ad5b5b',
+                    'line-color': '#847e79',
+                    'line-width': 1.2
+                },
+                'source-layer': 'October_MSF_trails-d2u3kc'
+            }); 
+});
+
+
+var toggleableLayerIds = [ 'bnrc-maintained', 'bnrc-boundaries', 'pleasant-trails', 'pleasant-boundaries', 'monument-trails', 'monument-boundaries', 'october-trails', 'october-boundaries'];
+
+for (var i = 0; i < toggleableLayerIds.length; i++) {
+    var id = toggleableLayerIds[i];
+
+    var link = document.createElement('a');
+    link.href = '#';
+    link.className = 'active';
+    link.textContent = id;
+
+    link.onclick = function (e) {
+        var clickedLayer = this.textContent;
+        e.preventDefault();
+        e.stopPropagation();
+
+        var visibility = map.getLayoutProperty(clickedLayer, 'visibility');
+
+        if (visibility === 'visible') {
+            map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+            this.className = '';
+        } else {
+            this.className = 'active';
+            map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
+        }
+    };
+
+    var layers = document.getElementById('menu');
+    layers.appendChild(link);
+}
+
+// ADD MAP CONTROLS
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+// Add geolocate control to the map.
+var geolocate = new mapboxgl.GeolocateControl({
+    positionOptions: {
+        enableHighAccuracy: true,
+        watchPosition: true
+    }
+});
+
+map.addControl(geolocate);
+
+
+// ADD Scale Control
+map.addControl(new mapboxgl.ScaleControl({
+    maxWidth: 150,
+    unit: 'imperial'
+}));
+
+
+
+geolocate.on('geolocate', function(e) {
+    console.log(e);
+    console.log(e.coords.latitude);
+    console.log(e.coords.longitude);
+    map.flyTo({
+  center: [e.coords.longitude, e.coords.latitude],
+  zoom: 15,
+  speed: 2,
+  curve: 2,
+  easing(t) {
+    return t;
+  }
+});
+  
+});
+
+// // add markers to map
+geojson.features.forEach(function(marker) {
+
+  // create a HTML element for each feature
+  var el = document.createElement('div');
+  switch(marker.properties.owner) {
+    case "one": 
+        el.className = 'marker-one';
+        break;
+    case "two":
+        el.className = 'marker-two';
+        break;
+    case "three":
+        el.className = 'marker-three';
+       break;
+    case "four":
+        el.className = 'marker-four';
+        break;
+} 
+
+  
+  el.style.backgroundImage =  marker.properties.iconSize.join('/') + '/)';
+  el.style.width = marker.properties.iconSize[0] + 'px';
+  el.style.height = marker.properties.iconSize[1] + 'px';
+  
+
+
+  // add marker to map
+  new mapboxgl.Marker(el).setLngLat(marker.geometry.coordinates)
+  //.setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+//.setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p>'))
+  .addTo(map);
+
+
+});
+
+
+
+/* var MapboxClient = require('mapbox');
+var client = new MapboxClient(mapboxgl.accessToken);
+
+client.listDatasets(function(err, datasets) {
+  console.log(datasets);
+}); */
+
+    var bounds = map.getBounds();
+    var sw = bounds.getSouthWest().wrap().toArray();
+    var ne = bounds.getNorthEast().wrap().toArray();
+    var center = bounds.getCenter().wrap().toArray();
+    console.log(sw);
+    console.log(ne);
+    console.log(center);
+    console.log(map.getBounds());
+    //change zoom level
+    map.on('zoomend', function(){
+    document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
+});
+
+</script>
+
+
+</script>
+
+</body>
+</html>
+
